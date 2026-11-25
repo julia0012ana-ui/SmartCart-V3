@@ -1,1 +1,895 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#030817">
+<title>SmartCart | Controle</title>
 
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #020715;
+  --blue: #03032bff;
+  --cyan: #08d8ff;
+  --white: #f4f8ff;
+  --muted: #9bb3d4;
+  --green: #19e68c;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(ellipse at 50% -12%, #09295b, #030b1d 42%, var(--bg) 78%);
+  color: var(--white);
+  font-family: Inter, system-ui, sans-serif;
+  padding: 14px 12px 26px;
+}
+
+.app {
+  width: min(100%, 760px);
+  margin: auto;
+}
+
+.top {
+  border: 1px solid #0754ad;
+  border-radius: 25px;
+  padding: 15px 18px 17px;
+  background: linear-gradient(145deg, #06152c, #020918);
+  box-shadow: 0 0 26px #006dff22;
+}
+
+.topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.connection {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.bt-icon {
+  font-size: 27px;
+  color: var(--cyan);
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #78869c;
+}
+
+.dot.on {
+  background: var(--green);
+  box-shadow: 0 0 12px var(--green);
+}
+
+.status-copy strong { display: block; color: white; }
+.status-copy span { font-size: 12px; }
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.small-btn {
+  border: 1px solid #1266bd;
+  background: #08234a;
+  border-radius: 11px;
+  padding: 9px 11px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.brand {
+  text-align: center;
+  margin: 10px auto 0;
+}
+
+.brand img {
+  display: block;
+  width: min(245px, 70%);
+  max-height: 110px;
+  object-fit: contain;
+  margin: auto;
+}
+
+.brand-fallback {
+  font-size: 36px;
+  font-weight: 900;
+}
+
+.brand-fallback span { color: var(--blue); }
+
+.brand p {
+  color: #9bb9e6;
+  font-size: 11px;
+  letter-spacing: 3px;
+}
+
+.grid-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 13px;
+}
+
+.panel {
+  border: 1px solid #0757ad;
+  border-radius: 21px;
+  background: linear-gradient(145deg, #071a35, #030d20);
+  padding: 15px;
+  box-shadow: 0 8px 24px #0004;
+}
+
+.panel-title {
+  color: #7dcaff;
+  font-size: 16px;
+  margin: 0 0 13px;
+}
+
+.gears {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+}
+
+.gear {
+  padding: 13px 4px;
+  border-radius: 13px;
+  background: #06152b;
+  border: 1px solid #174a82;
+  color: #b9dfff;
+  font-weight: bold;
+}
+
+.gear.active {
+  background: linear-gradient(135deg, #087fff, #034fc2);
+  border-color: var(--cyan);
+  color: white;
+  box-shadow: 0 0 17px #078dff66;
+}
+
+.speed-value,
+.volume-value {
+  text-align: center;
+  font-size: 21px;
+  font-weight: 800;
+  margin-top: 4px;
+}
+
+input[type=range] {
+  width: 100%;
+  accent-color: var(--cyan);
+}
+
+.dpad-wrap {
+  margin: 17px auto 0;
+  width: min(100%, 520px);
+  padding: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #071b3b, #020a19 68%);
+  border: 2px solid #057bff;
+  box-shadow: 0 0 26px #007bff35;
+}
+
+.dpad {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: repeat(3, minmax(78px, 1fr));
+  gap: 9px;
+  aspect-ratio: 1 / 0.86;
+}
+
+.move {
+  border: 1px solid #087fff;
+  border-radius: 22px;
+  background: linear-gradient(145deg, #0b2c59, #06152e);
+  color: #16cfff;
+  font-weight: 800;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 14px;
+  user-select: none;
+  touch-action: none;
+}
+
+.move .arrow {
+  font-size: 36px;
+  line-height: 1;
+}
+
+.move:active,
+.move.pressed {
+  background: linear-gradient(145deg, #087fff, #0647a9);
+  color: white;
+  box-shadow: 0 0 23px #00bfff77;
+}
+
+.move.stop {
+  border-radius: 50%;
+  border: 2px solid var(--cyan);
+  background: radial-gradient(circle, #0c3568, #04152f);
+  color: white;
+  font-size: 15px;
+}
+
+.move.stop .arrow { font-size: 26px; }
+
+.spacer { visibility: hidden; }
+
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 13px;
+}
+
+.volume-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volume-controls button {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #08234a;
+  border: 1px solid #1266bd;
+  font-size: 19px;
+}
+
+.complaint {
+  width: 100%;
+  min-height: 115px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  text-align: left;
+  border: 1px solid #078dff;
+  border-radius: 18px;
+  padding: 16px;
+  background: linear-gradient(135deg, #071c39, #030d20);
+}
+
+.complaint .warn {
+  font-size: 34px;
+  color: #5acaff;
+}
+
+.complaint strong {
+  display: block;
+  font-size: 16px;
+}
+
+.complaint small {
+  display: block;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.chev {
+  margin-left: auto;
+  color: var(--cyan);
+  font-size: 27px;
+}
+
+.message {
+  text-align: center;
+  min-height: 18px;
+  color: var(--muted);
+  font-size: 12px;
+  margin: 10px 0 0;
+}
+
+footer {
+  text-align: center;
+  color: #6f8caf;
+  font-size: 11px;
+  letter-spacing: 2px;
+  margin: 17px 0 3px;
+}
+
+dialog {
+  width: min(92%, 470px);
+  border: 1px solid var(--blue);
+  border-radius: 20px;
+  background: #06152c;
+  color: white;
+  padding: 20px;
+}
+
+dialog::backdrop { background: #000b; }
+
+dialog p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  margin: 12px 0 6px;
+}
+
+input[type=text],
+input[type=email],
+textarea {
+  width: 100%;
+  border: 1px solid #174a82;
+  border-radius: 11px;
+  background: #020b1b;
+  color: white;
+  padding: 12px;
+  font: inherit;
+}
+
+textarea {
+  min-height: 105px;
+  resize: vertical;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.primary {
+  border: 0;
+  border-radius: 11px;
+  padding: 11px 16px;
+  background: linear-gradient(110deg, #078cff, #0757d8);
+  font-weight: 800;
+}
+
+.secondary {
+  border: 1px solid #315276;
+  border-radius: 11px;
+  padding: 10px 14px;
+  background: #0a1a31;
+}
+
+@media(max-width:520px) {
+  body { padding: 9px; }
+  .panel { padding: 12px; }
+  .panel-title { font-size: 14px; }
+  .gear { font-size: 13px; padding: 12px 2px; }
+  .dpad-wrap { padding: 7px; }
+  .dpad {
+    grid-template-rows: repeat(3, minmax(68px, 1fr));
+    gap: 7px;
+  }
+  .move { border-radius: 17px; }
+  .move .arrow { font-size: 31px; }
+}
+
+@media(max-width:360px) {
+  .grid-two { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+<main class="app">
+
+<header class="top">
+  <div class="topline">
+    <div class="connection">
+      <span class="bt-icon">ᛒ</span>
+      <span id="statusDot" class="dot"></span>
+      <div class="status-copy">
+        <strong id="statusText">Desconectado</strong>
+        <span id="deviceText">Bluetooth SmartCart</span>
+      </div>
+    </div>
+
+    <div>
+      <button id="connectBtn" class="small-btn">Conectar</button>
+      <button id="disconnectBtn" class="small-btn" hidden>Desconectar</button>
+    </div>
+  </div>
+
+  <div class="brand">
+    <img src="assets/smartcart-logo.png"
+         alt="SmartCart"
+         onerror="this.style.display='none';document.getElementById('brandFallback').hidden=false">
+
+    <div id="brandFallback" class="brand-fallback" hidden>
+      Smart<span>Cart</span>
+    </div>
+
+    <p>CONTROLE REMOTO BLUETOOTH</p>
+  </div>
+</header>
+
+<section class="grid-two">
+
+  <div class="panel">
+    <h2 class="panel-title">⚙ Marchas</h2>
+
+    <div class="gears">
+      <button class="gear" data-gear="R">Ré</button>
+      <button class="gear active" data-gear="N">Neutro</button>
+      <button class="gear" data-gear="F">Frente</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2 class="panel-title">◉ Velocidade</h2>
+
+    <input id="speed" type="range"
+           min="0" max="100" value="70">
+
+    <div id="speedValue" class="speed-value">70%</div>
+  </div>
+
+</section>
+
+<section class="dpad-wrap">
+  <div class="dpad">
+
+    <div class="spacer"></div>
+
+    <button class="move" data-command="F">
+      <span class="arrow">⌃</span>
+      Frente
+    </button>
+
+    <div class="spacer"></div>
+
+    <button class="move" data-command="L">
+      <span class="arrow">❮</span>
+      Esquerda
+    </button>
+
+    <button class="move stop" data-command="S">
+      <span class="arrow">■</span>
+      Parar
+    </button>
+
+    <button class="move" data-command="R">
+      <span class="arrow">❯</span>
+      Direita
+    </button>
+
+    <div class="spacer"></div>
+
+    <button class="move" data-command="B">
+      <span class="arrow">⌄</span>
+      Ré
+    </button>
+
+    <div class="spacer"></div>
+
+  </div>
+</section>
+
+<section class="bottom-grid">
+
+  <div class="panel">
+    <h2 class="panel-title">🔊 Volume</h2>
+
+    <div class="volume-controls">
+      <button id="volumeDown">−</button>
+
+      <input id="volume" type="range"
+             min="0" max="100" value="70">
+
+      <button id="volumeUp">+</button>
+    </div>
+
+    <div id="volumeValue" class="volume-value">70%</div>
+  </div>
+
+
+</section>
+
+<p id="message" class="message">
+  Conecte o carrinho para começar.
+</p>
+
+<footer>SMARTCART • TECNOLOGIA EM MOVIMENTO</footer>
+
+</main>
+
+<dialog id="complaintDialog">
+  <form id="complaintForm">
+    <label for="complaintText">Reclamação ou sugestão</label>
+    <textarea id="complaintText" required
+              maxlength="2000"
+              placeholder="Conte o que aconteceu..."></textarea>
+
+    <div class="modal-actions">
+      <button type="button" id="closeDialog" class="secondary">
+        Cancelar
+      </button>
+
+      <button type="submit" class="primary">
+        Preparar envio
+      </button>
+    </div>
+
+  </form>
+</dialog>
+
+<script>
+// CONFIGURAÇÃO BLUETOOTH BLE UART
+
+const SERVICE_UUID =
+'6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+
+const RX_UUID =
+'6e400002-b5a3-f393-e0a9-e50e24dcca9e';
+
+const enc = new TextEncoder();
+
+let device = null;
+let tx = null;
+
+const $ = id => document.getElementById(id);
+
+function status(connected, name = 'Bluetooth SmartCart') {
+  $('statusText').textContent =
+    connected ? 'Conectado' : 'Desconectado';
+
+  $('deviceText').textContent = name;
+
+  $('statusDot').classList.toggle('on', connected);
+
+  $('connectBtn').hidden = connected;
+  $('disconnectBtn').hidden = !connected;
+}
+
+function say(text) {
+  $('message').textContent = text;
+}
+
+// ENVIAR COMANDOS AO CARRINHO
+
+async function send(command) {
+  if (!tx) {
+    say('Conecte o carrinho primeiro.');
+    return false;
+  }
+
+  try {
+    await tx.writeValue(
+      enc.encode(command + '\n')
+    );
+
+    say('Comando enviado: ' + command);
+    return true;
+
+  } catch (error) {
+    say('Falha no Bluetooth. Verifique a conexão.');
+    console.error(error);
+    return false;
+  }
+}
+
+// CONECTAR BLUETOOTH
+
+async function connect() {
+  if (!navigator.bluetooth) {
+    say('Web Bluetooth não disponível. Use Chrome ou Edge compatível e HTTPS.');
+    return;
+  }
+
+  try {
+    say('Procurando carrinho Bluetooth...');
+
+    device = await navigator.bluetooth.requestDevice({
+      filters: [{ services: [SERVICE_UUID] }]
+    });
+
+    device.addEventListener(
+      'gattserverdisconnected',
+      () => {
+        tx = null;
+        status(false);
+        say('Bluetooth desconectado.');
+      }
+    );
+
+    const server = await device.gatt.connect();
+
+    const service =
+      await server.getPrimaryService(SERVICE_UUID);
+
+    tx = await service.getCharacteristic(RX_UUID);
+
+    status(true, device.name || 'SmartCart');
+
+    say('Conectado com sucesso!');
+
+    await send('S');
+    await send('G:N');
+
+  } catch (error) {
+    console.error(error);
+    status(false);
+    say('Não foi possível conectar: ' + error.message);
+  }
+}
+
+function disconnect() {
+  if (device?.gatt?.connected) {
+    device.gatt.disconnect();
+  } else {
+    tx = null;
+    status(false);
+  }
+}
+
+$('connectBtn').addEventListener('click', connect);
+$('disconnectBtn').addEventListener('click', disconnect);
+
+// MARCHAS
+
+document.querySelectorAll('[data-gear]').forEach(btn => {
+  btn.addEventListener('click', async () => {
+
+    const gear = btn.dataset.gear;
+
+    document.querySelectorAll('[data-gear]')
+      .forEach(b => b.classList.toggle('active', b === btn));
+
+    await send('G:' + gear);
+
+    if (gear === 'N') {
+      await send('S');
+    }
+  });
+});
+
+// DIREÇÃO: PRESSIONAR PARA MOVER E SOLTAR PARA PARAR
+
+document.querySelectorAll('[data-command]').forEach(btn => {
+
+  const command = btn.dataset.command;
+
+  if (command === 'S') {
+    btn.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      send('S');
+    });
+    return;
+  }
+
+  const start = e => {
+    e.preventDefault();
+    btn.classList.add('pressed');
+
+    try {
+      btn.setPointerCapture(e.pointerId);
+    } catch (_) {}
+
+    send(command);
+  };
+
+  const stop = () => {
+    if (!btn.classList.contains('pressed')) return;
+
+    btn.classList.remove('pressed');
+    send('S');
+  };
+
+  btn.addEventListener('pointerdown', start);
+  btn.addEventListener('pointerup', stop);
+  btn.addEventListener('pointercancel', stop);
+  btn.addEventListener('lostpointercapture', stop);
+
+  btn.addEventListener('contextmenu', e => e.preventDefault());
+});
+
+// VELOCIDADE
+
+$('speed').addEventListener('input', e => {
+  $('speedValue').textContent = e.target.value + '%';
+});
+
+$('speed').addEventListener('change', e => {
+  send('V:' + e.target.value);
+});
+
+// VOLUME
+
+$('volume').addEventListener('input', e => {
+  $('volumeValue').textContent = e.target.value + '%';
+});
+
+$('volume').addEventListener('change', e => {
+  send('VOL:' + e.target.value);
+});
+
+function changeVolume(delta) {
+  const el = $('volume');
+
+  el.value = Math.max(
+    0,
+    Math.min(100, Number(el.value) + delta)
+  );
+
+  $('volumeValue').textContent = el.value + '%';
+
+  send('VOL:' + el.value);
+}
+
+$('volumeDown').addEventListener(
+  'click', () => changeVolume(-5)
+);
+
+$('volumeUp').addEventListener(
+  'click', () => changeVolume(5)
+);
+
+// RECLAMAÇÕES
+
+// Coloque aqui o endereço real de suporte.
+const SUPPORT_EMAIL = '';
+
+$('complaintBtn').addEventListener('click', () => {
+  $('complaintDialog').showModal();
+});
+
+$('closeDialog').addEventListener('click', () => {
+  $('complaintDialog').close();
+});
+
+$('complaintForm').addEventListener('submit', e => {
+  e.preventDefault();
+
+  const name = $('complaintName').value.trim();
+  const email = $('complaintEmail').value.trim();
+  const body = $('complaintText').value.trim();
+
+  if (!body) {
+    say('Escreva sua reclamação primeiro.');
+    return;
+  }
+
+  const subject = encodeURIComponent('Reclamação SmartCart');
+
+  const content = encodeURIComponent(
+    'Nome: ' + name +
+    '\nContato: ' + email +
+    '\n\n' + body
+  );
+
+  if (SUPPORT_EMAIL) {
+
+    location.href =
+      'mailto:' + SUPPORT_EMAIL +
+      '?subject=' + subject +
+      '&body=' + content;
+
+    $('complaintDialog').close();
+
+    say('Aplicativo de e-mail aberto.');
+
+  } else {
+
+    const text =
+      'Assunto: Reclamação SmartCart\n\n' +
+      'Nome: ' + name +
+      '\nContato: ' + email +
+      '\n\n' + body;
+
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text)
+        .then(() => say(
+          'Reclamação copiada. Configure SUPPORT_EMAIL para habilitar o e-mail.'
+        ))
+        .catch(() => say(
+          'Configure SUPPORT_EMAIL para habilitar o envio.'
+        ));
+    } else {
+      say('Configure SUPPORT_EMAIL para habilitar o envio.');
+    }
+
+    $('complaintDialog').close();
+  }
+});
+  $('faqBtn').addEventListener('click', () => {
+  $('faqDialog').showModal();
+});
+
+$('closeFaq').addEventListener('click', () => {
+  $('faqDialog').close();
+});
+</script><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartCart</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#020715;
+    color:white;
+    padding:20px;
+}
+
+.container{
+    max-width:800px;
+    margin:auto;
+}
+
+h1{
+    color:#03032bff;
+}
+
+.faq{
+    background:#071c39;
+    border:1px solid #078dff;
+    padding:15px;
+    margin-bottom:15px;
+    border-radius:15px;
+}
+
+.pergunta{
+    color:#03032bff;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+button{
+    background:#071c39;
+    color:#03032bff;
+    border:1px solid #078dff;
+    padding:12px 20px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:15px;
+    margin:5px 0;
+}
+
+button:hover{
+    background:#078dff;
+    color:white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+
+<br>
+
+
+<br>
+
+<!-- Botão de Reclamações -->
+<button onclick="window.open('https://forms.gle/eZgdh1KK2nwofx2E8', '_blank')">
+📝 Relatar Reclamações
+</button>
+
+<br>
+
+
+</div>
+
+</body>
+</html>
